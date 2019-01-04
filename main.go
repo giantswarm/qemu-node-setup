@@ -7,9 +7,14 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"strings"
 	"text/template"
 
 	"github.com/giantswarm/microerror"
+)
+
+const (
+	dnsServersDelimiter = ":"
 )
 
 func dupIP(ip net.IP) net.IP {
@@ -33,10 +38,16 @@ func mainError() error {
 	}
 
 	bridgeIP := flag.String("bridge-ip", "", "IP address of the bridge (used to retrieve ip and gateway).")
+	dnsServers := flag.String("dns-servers", "", "Colon separated list of DNS servers.")
 	hostname := flag.String("hostname", "", "Hostname of the tenant node.")
 	mainConfig := flag.String("main-config", "", "Path to main ignition config (appended to small).")
 	out := flag.String("out", "", "Path to save resulting ignition config.")
 	flag.Parse()
+
+	dnsServersList := strings.Split(*dnsServers, dnsServersDelimiter)
+	if len(dnsServersList) == 0 {
+		return microerror.New("dns servers list can not be empty")
+	}
 
 	ip := net.ParseIP(*bridgeIP)
 	ip = ip.To4()
@@ -53,6 +64,7 @@ func mainError() error {
 	}
 
 	nodeSetup := NodeSetup{
+		DNSServers: dnsServersList,
 		Gateway:    ip.String(),
 		Hostname:   *hostname,
 		IfaceIP:    ifaceIP.String(),

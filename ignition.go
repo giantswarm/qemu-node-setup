@@ -15,7 +15,7 @@ const smallIgnition = `
   "networkd": {
     "units": [
       {
-        "contents": "[Match]\nName=eth0\n\n[Network]\nAddress={{ .IfaceIP }}/30\nGateway={{ .Gateway }}\nDNS=1.1.1.1\nDNS=8.8.4.4",
+        "contents": "[Match]\nName=eth0\n\n[Network]\nAddress={{ .IfaceIP }}/30\nGateway={{ .Gateway }}{{range $srv := .DNSServers }}\nDNS={{ $srv }}{{ end }}",
         "name": "00-eth0.network"
       }
     ]
@@ -32,6 +32,7 @@ const smallIgnition = `
 `
 
 type NodeSetup struct {
+	DNSServers []string
 	Gateway    string
 	Hostname   string
 	IfaceIP    string
