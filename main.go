@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	dnsServersDelimiter = ":"
+	dnsServersDelimiter = ","
 )
 
 func dupIP(ip net.IP) net.IP {
