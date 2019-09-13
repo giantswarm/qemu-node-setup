@@ -15,6 +15,7 @@ import (
 
 const (
 	serversDelimiter = ","
+	gateway          = "169.254.1.1"
 )
 
 func dupIP(ip net.IP) net.IP {
@@ -33,11 +34,7 @@ func main() {
 func mainError() error {
 	var err error
 
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	bridgeIP := flag.String("bridge-ip", "", "IP address of the bridge (used to retrieve ip and gateway).")
+	nodeIP := flag.String("node-ip", "", "IP address of the node")
 	dnsServers := flag.String("dns-servers", "", "Colon separated list of DNS servers.")
 	hostname := flag.String("hostname", "", "Hostname of the tenant node.")
 	mainConfig := flag.String("main-config", "", "Path to main ignition config (appended to small).")
@@ -64,15 +61,6 @@ func mainError() error {
 		}
 	}
 
-	ip := net.ParseIP(*bridgeIP)
-	ip = ip.To4()
-	if ip == nil {
-		return microerror.New("bridge-ip should be a valid IP address")
-	}
-
-	ifaceIP := dupIP(ip)
-	ifaceIP[3]++
-
 	mainConfigData, err := ioutil.ReadFile(*mainConfig)
 	if err != nil {
 		return microerror.Mask(err)
@@ -80,9 +68,9 @@ func mainError() error {
 
 	nodeSetup := NodeSetup{
 		DNSServers: dnsServersList,
-		Gateway:    ip.String(),
+		Gateway:    gateway,
 		Hostname:   *hostname,
-		IfaceIP:    ifaceIP.String(),
+		IfaceIP:    *nodeIP,
 		MainConfig: base64.StdEncoding.EncodeToString(mainConfigData),
 		NTPServers: ntpServersList,
 	}
