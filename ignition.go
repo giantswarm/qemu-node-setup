@@ -15,7 +15,7 @@ const smallIgnition = `
   "networkd": {
     "units": [
       {
-        "contents": "[Match]\nName=eth0\n\n[Network]\nAddress={{ .IfaceIP }}/32\nGateway={{ .Gateway }}{{range $srv := .DNSServers }}\nDNS={{ $srv }}{{ end }}{{range $srv := .NTPServers }}\nNTP={{ $srv }}{{ end }}",
+        "contents": "[Match]\nName=eth0\n\n[Network]\nAddress={{ .IfaceIP }}/32\n{{range $srv := .DNSServers }}\nDNS={{ $srv }}{{ end }}{{range $srv := .NTPServers }}\nNTP={{ $srv }}{{ end }}\n[Route]Destination={{.Gateway}}/32\nScope=link\n[Route]\nGateway={{.Gateway}}",
         "name": "00-eth0.network"
       }
     ]
