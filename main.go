@@ -35,10 +35,10 @@ func mainError() error {
 	var err error
 
 	nodeIP := flag.String("node-ip", "", "IP address of the node")
-	dnsServers := flag.String("dns-servers", "", "Colon separated list of DNS servers.")
+	dnsServers := flag.String("dns-servers", "", "Comma separated list of DNS servers.")
 	hostname := flag.String("hostname", "", "Hostname of the tenant node.")
 	mainConfig := flag.String("main-config", "", "Path to main ignition config (appended to small).")
-	ntpServers := flag.String("ntp-servers", "", "Colon separated list of NTP servers.")
+	ntpServers := flag.String("ntp-servers", "", "Comma separated list of NTP servers.")
 	out := flag.String("out", "", "Path to save resulting ignition config.")
 	flag.Parse()
 
